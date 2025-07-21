@@ -12,7 +12,6 @@ from tga_shortage_scraper import get_params, handle_csv, BASE_URL
 @click.option("--search", help="Keyword search.")
 def main(ingredient: Optional[str], search: Optional[str]) -> None:
     """Main function to run the TGA Shortage Scraper."""
-
     # Create a session
     session = requests.Session()
 

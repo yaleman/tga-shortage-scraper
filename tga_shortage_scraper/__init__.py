@@ -95,8 +95,12 @@ def handle_csv(
             or (ingredient.lower() not in row_data.artg_name.lower())
         ):
             continue
+
+        all_values = " ".join(
+            [str(value).lower() for value in row_data.model_dump().values()]
+        )
         if search_keywords and not all(
-            keyword in row_data.artg_name.lower() for keyword in search_keywords
+            keyword in all_values for keyword in search_keywords
         ):
             continue
         data.append(row_data)

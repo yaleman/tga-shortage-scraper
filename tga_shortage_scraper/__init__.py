@@ -36,6 +36,8 @@ def get_params(
 
 
 class ArtgData(BaseModel):
+    """Data model for ARTG Shortage information."""
+
     artg_id: int = Field(alias="ARTG ID")
     artg_name: str = Field(alias="ARTG name")
     active_ingredients: str = Field(alias="Active ingredients")
@@ -54,7 +56,7 @@ class ArtgData(BaseModel):
     last_updated: Optional[date] = Field(alias="Last updated")
 
     @model_validator(mode="before")
-    def validate_dates(cls, values: Dict[str, str]) -> Dict[str, str]:
+    def validate_dates(cls, values: Dict[str, str]) -> Dict[str, str]:  # pylint: disable=no-self-argument
         """Convert date strings to date objects."""
         for field in [
             "Supply impact start date",
@@ -77,9 +79,13 @@ class ArtgData(BaseModel):
 ArtgResults = RootModel[List[ArtgData]]
 
 
-def handle_csv(lines: List[str], ingredient: Optional[str]) -> ArtgResults:
+def handle_csv(
+    lines: List[str], ingredient: Optional[str], search: Optional[str]
+) -> ArtgResults:
     """Parse the CSV response text into a JSON object."""
     data = []
+
+    search_keywords = search.lower().split() if search else []
 
     csv_reader = csv.DictReader(lines)
     for row in csv_reader:
@@ -87,6 +93,10 @@ def handle_csv(lines: List[str], ingredient: Optional[str]) -> ArtgResults:
         if ingredient is not None and (
             (ingredient.lower() not in row_data.active_ingredients.lower())
             or (ingredient.lower() not in row_data.artg_name.lower())
+        ):
+            continue
+        if search_keywords and not all(
+            keyword in row_data.artg_name.lower() for keyword in search_keywords
         ):
             continue
         data.append(row_data)

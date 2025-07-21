@@ -1,3 +1,5 @@
+"""Search the TGA Shortage database for ARTG Shortages."""
+
 from typing import Optional
 import requests
 import click
@@ -7,7 +9,8 @@ from tga_shortage_scraper import get_params, handle_csv, BASE_URL
 
 @click.command()
 @click.option("--ingredient", help="Search for an active ingredient.")
-def main(ingredient: Optional[str]) -> None:
+@click.option("--search", help="Keyword search.")
+def main(ingredient: Optional[str], search: Optional[str]) -> None:
     """Main function to run the TGA Shortage Scraper."""
 
     # Create a session
@@ -34,7 +37,7 @@ def main(ingredient: Optional[str]) -> None:
         response_text = response.text.strip().splitlines()[10:]
 
         # the response is a csv, so parse it into json
-        results = handle_csv(response_text, ingredient=ingredient)
+        results = handle_csv(response_text, ingredient=ingredient, search=search)
 
         print(results.model_dump_json(indent=2))
     except BrokenPipeError:
@@ -43,4 +46,4 @@ def main(ingredient: Optional[str]) -> None:
 
 
 if __name__ == "__main__":
-    main()
+    main()  # pylint: disable=no-value-for-parameter

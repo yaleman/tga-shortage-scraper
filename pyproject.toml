@@ -1,6 +1,6 @@
 [project]
 name = "tga-shortage-scraper"
-version = "0.1.0"
+version = "0.1.1"
 description = "Scrape the TGA shortage database for ARTG entries."
 readme = "README.md"
 requires-python = ">=3.12"
